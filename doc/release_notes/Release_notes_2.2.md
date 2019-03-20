@@ -34,3 +34,8 @@ The responses for the listed below endpoints are enriched with the proper field 
  - GET `/aspsp-api/v1/piis/consents/account/{account-id}`
 
 Also, this field is propagated to the SPI level for PIS, AIS and PIIS. 
+
+## Bugfix: All links must be contained in an object with `href`
+
+From now on, all Links in the response in the _links object contain an object with `href`. E.g.
+`"scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"}`
