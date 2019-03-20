@@ -24,6 +24,8 @@ import de.adorsys.psd2.xs2a.service.authorization.ScaApproachServiceTypeProvider
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
@@ -51,9 +53,12 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
     private final SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiErrorMapper spiErrorMapper;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
     public SinglePaymentInitiationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData) {
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuIdData);
+        SpiAspspConsentDataProvider aspspConsentDataProvider =
+            aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(payment.getPaymentId());
 
         SpiResponse<SpiSinglePaymentInitiationResponse> spiResponse = singlePaymentSpi.initiatePayment(spiContextData, xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), AspspConsentData.emptyConsentData());
 

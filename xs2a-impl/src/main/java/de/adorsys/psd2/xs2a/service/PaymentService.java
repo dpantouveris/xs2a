@@ -134,12 +134,12 @@ public class PaymentService {
      *
      * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
      * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
-     * @param paymentId      ASPSP identifier of the payment
+     * @param encryptedPaymentId      ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
+    public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
+        xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.builder()
@@ -156,12 +156,11 @@ public class PaymentService {
         }
 
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentResponse);
-        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
         PaymentInformationResponse response;
 
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
         if (commonPayment.getPaymentData() != null) {
-            response = readCommonPaymentService.getPayment(commonPayment, readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData);
+            response = readCommonPaymentService.getPayment(commonPayment, readPsuIdDataFromList(commonPayment.getPsuDataList()), encryptedPaymentId);
         } else {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
@@ -171,7 +170,7 @@ public class PaymentService {
             }
 
             ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData); //NOT USED IN 1.2
+            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), encryptedPaymentId); //NOT USED IN 1.2
         }
 
         if (response.hasError()) {
@@ -189,12 +188,12 @@ public class PaymentService {
      *
      * @param paymentType    The addressed payment category Single, Periodic or Bulk
      * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
-     * @param paymentId      String representation of payment primary ASPSP identifier
+     * @param encryptedPaymentId      String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
+    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
+        xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<TransactionStatus>builder()
@@ -214,8 +213,8 @@ public class PaymentService {
             return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
         }
 
-        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
-        List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(encryptedPaymentId);
+        List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(encryptedPaymentId);
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(readPsuIdDataFromList(psuData));
 
         ReadPaymentStatusResponse readPaymentStatusResponse;
@@ -250,9 +249,9 @@ public class PaymentService {
                        .build();
         }
 
-        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, transactionStatus)) {
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(encryptedPaymentId, transactionStatus)) {
             log.info("X-Request-ID: [{}], Payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
-                     requestProviderService.getRequestId(), paymentId, transactionStatus);
+                     requestProviderService.getRequestId(), encryptedPaymentId, transactionStatus);
         }
 
         return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();

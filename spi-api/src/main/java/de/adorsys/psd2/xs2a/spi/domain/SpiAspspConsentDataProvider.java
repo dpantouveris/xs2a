@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment;
+package de.adorsys.psd2.xs2a.spi.domain;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-
-public interface ReadPaymentStatusService {
-
-    ReadPaymentStatusResponse readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, @NotNull String encryptedPaymentId);
+public interface SpiAspspConsentDataProvider {
+    byte[] loadAspspConsentData();
+    void updateAspspConsentData(byte[] aspspConsentData);
+    void clearAspspConsentData();
 }

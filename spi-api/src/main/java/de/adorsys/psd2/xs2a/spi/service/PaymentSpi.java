@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
@@ -35,7 +36,7 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @return Returns a positive or negative payment initiation response as a part of SpiResponse
      */
     @NotNull
-    SpiResponse<R> initiatePayment(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
+    SpiResponse<R> initiatePayment(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Reads payment by id
@@ -46,7 +47,7 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @return Returns T payment as a part of SpiResponse
      */
     @NotNull
-    SpiResponse<T> getPaymentById(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<T> getPaymentById(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Reads payment status by id
@@ -57,7 +58,7 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @return Returns TransactionStatus as a part of SpiResponse
      */
     @NotNull
-    SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Executes payment - to be used in a case, when none SCA methods exist
@@ -68,7 +69,7 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @return Returns a response object, which contains the transaction status. For multilevel SCA, PATC status should be returned for all successful authorisation but the last
      */
     @NotNull
-    SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation executes payment at ASPSP. Used only with embedded SCA Approach.
@@ -81,5 +82,5 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @return Returns a response object, which contains the transaction status. For multilevel SCA, PATC status should be returned for all successful authorisations but the last
      */
     @NotNull
-    SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment;
+package de.adorsys.psd2.xs2a.service.spi;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import org.jetbrains.annotations.NotNull;
+import de.adorsys.psd2.consent.api.AspspDataService;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+@Component
+@RequiredArgsConstructor
+public class SpiAspspConsentDataProviderFactory {
+    private final AspspDataService aspspDataService;
 
-public interface ReadPaymentStatusService {
-
-    ReadPaymentStatusResponse readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, @NotNull String encryptedPaymentId);
+    public SpiAspspConsentDataProvider getSpiAspspDataProviderFor(String encryptedConsentId) {
+        return new SpiAspspConsentDataProviderImpl(encryptedConsentId, aspspDataService);
+    }
 }
