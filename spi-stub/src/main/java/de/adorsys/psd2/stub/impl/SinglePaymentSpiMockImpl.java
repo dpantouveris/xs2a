@@ -19,10 +19,7 @@ package de.adorsys.psd2.stub.impl;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
@@ -32,8 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.Currency;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -46,7 +42,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
         log.info("SinglePaymentSpi#initiatePayment: contextData {}, spiSinglePayment {}, aspspConsentData {}", contextData, payment, initialAspspConsentData);
         SpiSinglePaymentInitiationResponse response = new SpiSinglePaymentInitiationResponse();
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setPaymentId("5c909c7ea690c806c59d0236");
+        response.setPaymentId(UUID.randomUUID().toString());
         response.setAspspAccountId("11111-11118");
 
         return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
@@ -59,21 +55,10 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
     @NotNull
     public SpiResponse<SpiSinglePayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
         log.info("SinglePaymentSpi#getPaymentById: contextData {}, spiSinglePayment {}, aspspConsentData {}", contextData, payment, aspspConsentData);
-        SpiSinglePayment spiSinglePayment = new SpiSinglePayment("sepa-credit-transfers");
-        spiSinglePayment.setPaymentId("5c909c7ea690c806c59d0236");
-        spiSinglePayment.setEndToEndIdentification("RI-1234567890");
-        spiSinglePayment.setDebtorAccount(new SpiAccountReference("11111-11118", "DE52500105173911841934", null, null, null, null, Currency.getInstance("EUR")));
-        spiSinglePayment.setInstructedAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1000)));
-        spiSinglePayment.setCreditorAccount(new SpiAccountReference(null, "DE52500105173911841934", null, null, null, null, Currency.getInstance("EUR")));
-        spiSinglePayment.setCreditorAgent("FSDFSASGSGF");
-        spiSinglePayment.setCreditorName("Telekom");
-        spiSinglePayment.setCreditorAddress(new SpiAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "DE"));
-        spiSinglePayment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
-        spiSinglePayment.setPaymentStatus(TransactionStatus.RCVD);
 
         return SpiResponse.<SpiSinglePayment>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(spiSinglePayment)
+                   .payload(payment)
                    .success();
     }
 
@@ -84,7 +69,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(TransactionStatus.RCVD)
+                   .payload(payment.getPaymentStatus())
                    .success();
     }
 

@@ -17,14 +17,9 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
@@ -34,12 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Currency;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -52,7 +42,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
         log.info("PeriodicPaymentSpi#initiatePayment: contextData {}, spiPeriodicPayment {}, aspspConsentData {}", contextData, payment, initialAspspConsentData);
         SpiPeriodicPaymentInitiationResponse response = new SpiPeriodicPaymentInitiationResponse();
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setPaymentId("5c90de7ca690c806c59d0260");
+        response.setPaymentId(UUID.randomUUID().toString());
         response.setAspspAccountId("11111-11111");
 
         return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
@@ -65,27 +55,10 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
     @NotNull
     public SpiResponse<SpiPeriodicPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         log.info("PeriodicPaymentSpi#getPaymentById: contextData {}, spiPeriodicPayment {}, aspspConsentData {}", contextData, payment, aspspConsentData);
-        SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment("sepa-credit-transfers");
-        spiPeriodicPayment.setPaymentId("5c90de7ca690c806c59d0260");
-        spiPeriodicPayment.setEndToEndIdentification("RI-1234567890");
-        spiPeriodicPayment.setDebtorAccount(new SpiAccountReference("11111-11111", "DE89370400440532013000", null, null, null, null, Currency.getInstance("USD")));
-        spiPeriodicPayment.setInstructedAmount(new SpiAmount(Currency.getInstance("USD"), new BigDecimal(1000)));
-        spiPeriodicPayment.setCreditorAccount(new SpiAccountReference(null, "DE89370400440532013000", null, null, null, null, Currency.getInstance("USD")));
-        spiPeriodicPayment.setCreditorAgent("FSDFSASGSGF");
-        spiPeriodicPayment.setCreditorName("Telekom");
-        spiPeriodicPayment.setCreditorAddress(new SpiAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "DE"));
-        spiPeriodicPayment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
-        spiPeriodicPayment.setRequestedExecutionDate(LocalDate.of(2020, Month.JANUARY, 1));
-        spiPeriodicPayment.setRequestedExecutionTime(OffsetDateTime.of(2020, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC));
-        spiPeriodicPayment.setStartDate(LocalDate.of(2020, Month.JANUARY, 1));
-        spiPeriodicPayment.setEndDate(LocalDate.of(2021, Month.FEBRUARY, 1));
-        spiPeriodicPayment.setExecutionRule(PisExecutionRule.PRECEEDING);
-        spiPeriodicPayment.setFrequency(SpiFrequencyCode.ANNUAL);
-        spiPeriodicPayment.setPaymentStatus(TransactionStatus.RCVD);
 
         return SpiResponse.<SpiPeriodicPayment>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(spiPeriodicPayment)
+                   .payload(payment)
                    .success();
     }
 
@@ -96,7 +69,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(TransactionStatus.RCVD)
+                   .payload(payment.getPaymentStatus())
                    .success();
     }
 

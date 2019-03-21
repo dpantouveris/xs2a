@@ -18,7 +18,6 @@ package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
@@ -31,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
@@ -42,7 +43,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
         log.info("CommonPaymentSpi#initiatePayment: contextData {}, spiPaymentInfo {}, aspspConsentData {}", contextData, payment, initialAspspConsentData);
         SpiCommonPaymentInitiationResponse response = new SpiCommonPaymentInitiationResponse();
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setPaymentId("5c90f9d7a690c806c59d0273");
+        response.setPaymentId(UUID.randomUUID().toString());
         response.setAspspAccountId("d0419f4f-54a5-47fd-ae59-af308601bb16");
 
         return SpiResponse.<SpiPaymentInitiationResponse>builder()
@@ -55,15 +56,10 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
     @NotNull
     public SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         log.info("CommonPaymentSpi#getPaymentById: contextData {}, spiPaymentInfo {}, aspspConsentData {}", contextData, payment, aspspConsentData);
-        SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo("pain.001-sepa-credit-transfers");
-        spiPaymentInfo.setPaymentId("5c90f9d7a690c806c59d0273");
-        spiPaymentInfo.setPaymentStatus(TransactionStatus.RCVD);
-        spiPaymentInfo.setPaymentType(PaymentType.SINGLE);
-        spiPaymentInfo.setPaymentData(new byte[]{});
 
         return SpiResponse.<SpiPaymentInfo>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(spiPaymentInfo)
+                   .payload(payment)
                    .success();
     }
 
@@ -74,7 +70,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(TransactionStatus.RCVD)
+                   .payload(payment.getStatus())
                    .success();
     }
 

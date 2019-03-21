@@ -41,6 +41,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -53,11 +54,11 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
         log.info("BulkPaymentSpi#initiatePayment: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, initialAspspConsentData);
         SpiBulkPaymentInitiationResponse response = new SpiBulkPaymentInitiationResponse();
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setPaymentId("f85b28a3-51e8-4761-8edb-3ea56bcef4b0");
+        response.setPaymentId(UUID.randomUUID().toString());
         response.setAspspAccountId("11111-11119");
         List<SpiSinglePayment> payments = new ArrayList<>();
-        payments.add(buildSpiSinglePayment("5c90e70da690c806c59d0270"));
-        payments.add(buildSpiSinglePayment("5c90e70da690c806c59d0271"));
+        payments.add(buildSpiSinglePayment(UUID.randomUUID().toString()));
+        payments.add(buildSpiSinglePayment(UUID.randomUUID().toString()));
         response.setPayments(payments);
 
         return SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
@@ -70,17 +71,10 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
     @NotNull
     public SpiResponse<SpiBulkPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
         log.info("BulkPaymentSpi#getPaymentById: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, aspspConsentData);
-        SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
-        spiBulkPayment.setPaymentId("f85b28a3-51e8-4761-8edb-3ea56bcef4b0");
-        spiBulkPayment.setPaymentStatus(TransactionStatus.RCVD);
-        List<SpiSinglePayment> payments = new ArrayList<>();
-        payments.add(buildSpiSinglePayment("5c90e70da690c806c59d0270"));
-        payments.add(buildSpiSinglePayment("5c90e70da690c806c59d0271"));
-        spiBulkPayment.setPayments(payments);
 
         return SpiResponse.<SpiBulkPayment>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(spiBulkPayment)
+                   .payload(payment)
                    .success();
     }
 
@@ -91,7 +85,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(TransactionStatus.RCVD)
+                   .payload(payment.getPaymentStatus())
                    .success();
     }
 
