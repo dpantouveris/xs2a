@@ -70,7 +70,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .aspspConsentData(aspspConsentData)
-                   .payload(payment.getStatus())
+                   .payload(payment.getPaymentStatus())
                    .success();
     }
 
