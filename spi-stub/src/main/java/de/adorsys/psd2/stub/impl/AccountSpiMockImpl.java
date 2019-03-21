@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.impl;
+package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
@@ -41,7 +41,7 @@ import java.util.List;
 public class AccountSpiMockImpl implements AccountSpi {
     @Override
     public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestAccountList: contextData {}, withBalance {}, accountConsent {}, aspspConsentData {}");
+        log.info("AccountSpi#requestAccountList: contextData {}, withBalance {}, accountConsent {}, aspspConsentData {}", contextData, withBalance, accountConsent, aspspConsentData);
         SpiAccountDetails details = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                           "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"), "Müller",
                                                           "SCT", null, null, "DEUTDE8EXXX", null,
@@ -55,7 +55,7 @@ public class AccountSpiMockImpl implements AccountSpi {
 
     @Override
     public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestAccountDetailForAccount: contextData {}, withBalance {}, accountReference {}, accountConsent {}, aspspConsentData {}");
+        log.info("AccountSpi#requestAccountDetailForAccount: contextData {}, withBalance {}, accountReference {}, accountConsent {}, aspspConsentData {}", contextData, accountReference, accountConsent, aspspConsentData);
         SpiAccountDetails accountDetails = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                                  null, null, null, null, Currency.getInstance("EUR"), "Müller",
                                                                  "SCT", null, null, "DEUTDE8EXXX", null,

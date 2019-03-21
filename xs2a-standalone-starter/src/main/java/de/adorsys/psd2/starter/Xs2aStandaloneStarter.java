@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2;
+package de.adorsys.psd2.starter;
 
 import de.adorsys.psd2.xs2a.config.EnableXs2aInterface;
 import de.adorsys.psd2.xs2a.web.config.EnableXs2aSwagger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @EnableXs2aSwagger
 @EnableXs2aInterface
 @SpringBootApplication
-public class SpiStarterApplication {
+@ComponentScan(basePackages = {"de.adorsys.psd2.stub"})
+public class Xs2aStandaloneStarter {
     public static void main(String[] args) {
-        SpringApplication.run(SpiStarterApplication.class, args);
+        SpringApplication.run(Xs2aStandaloneStarter.class, args);
     }
 }
