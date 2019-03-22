@@ -17,6 +17,9 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
 public enum ErrorType {
+
+    COMMON_400,
+
     PIS_400,
     PIS_401,
     PIS_403,
