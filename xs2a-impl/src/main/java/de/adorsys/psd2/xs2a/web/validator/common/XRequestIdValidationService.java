@@ -37,6 +37,8 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_
 public class XRequestIdValidationService {
 
     private static final String UUID_REGEX = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$";
+    private static final String ERROR_TEXT_NULL_HEADER = "'X-Request-ID' may not be null";
+    private static final String ERROR_TEXT_WRONG_HEADER = "'X-Request-ID' has to be represented by standard 36-char UUID representation";
 
     /**
      * Validates the 'X-Request-ID' header for non-null state and correct structure.
@@ -49,11 +51,11 @@ public class XRequestIdValidationService {
         String xRequestId = request.getHeader(X_REQUEST_ID);
 
         if (Objects.isNull(xRequestId)) {
-            return ValidationResult.invalid(ErrorType.COMMON_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "'X-Request-ID' may not be null"));
+            return ValidationResult.invalid(ErrorType.COMMON_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ERROR_TEXT_NULL_HEADER));
         }
 
         if (isNonValid(xRequestId)) {
-            return ValidationResult.invalid(ErrorType.COMMON_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "'X-Request-ID' has to be represented by standard 36-char UUID representation"));
+            return ValidationResult.invalid(ErrorType.COMMON_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ERROR_TEXT_WRONG_HEADER));
         }
 
         return ValidationResult.valid();
