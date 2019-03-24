@@ -36,7 +36,7 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationS
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.psu.CmsPsuAisServiceInternal;
+import de.adorsys.psd2.consent.service.psu.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -52,6 +52,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -93,7 +94,8 @@ public class CmsPsuAisServiceTest {
     private AisConsentService aisConsentService;
     @Mock
     private AisConsentUsageService aisConsentUsageService;
-
+    @Spy
+    private CmsPsuService cmsPsuService;
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
     private AisAccountConsent aisAccountConsent;
