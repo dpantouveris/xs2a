@@ -51,15 +51,15 @@ public class SwaggerConfig {
                    .build();
     }
 
-//    @Bean
-//    @Primary
-//    public SwaggerResourcesProvider swaggerResourcesProvider() {
-//        return () -> {
-//            SwaggerResource swaggerResource = new SwaggerResource();
-//            swaggerResource.setLocation(resolveYamlLocation());
-//            return Collections.singletonList(swaggerResource);
-//        };
-//    }
+    @Bean
+    @Primary
+    public SwaggerResourcesProvider swaggerResourcesProvider() {
+        return () -> {
+            SwaggerResource swaggerResource = new SwaggerResource();
+            swaggerResource.setLocation(resolveYamlLocation());
+            return Collections.singletonList(swaggerResource);
+        };
+    }
 
     private String resolveYamlLocation() {
         if (StringUtils.isBlank(customPsd2ApiLocation)) {
