@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aMethodNameConstant.CREATE_CONSENT;
+
 @ControllerAdvice(assignableTypes = {ConsentController.class})
 public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
 
@@ -43,7 +45,7 @@ public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         String methodName = returnType.getMethod().getName();
-        if ("_createConsent".equals(methodName)) {
+        if (CREATE_CONSENT.equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
             if (!hasError(body, ConsentsResponse201.class)) {
                 ConsentsResponse201 consentResponse = (ConsentsResponse201) body;

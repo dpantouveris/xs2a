@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aMethodNameConstant.INITIATE_PAYMENT;
+
 @ControllerAdvice(assignableTypes = {PaymentController.class})
 public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
 
@@ -51,7 +53,7 @@ public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
                 || "_updatePaymentCancellationPsuData".equals(methodName)
                 || "_updatePaymentPsuData".equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
-        } else if ("_initiatePayment".equals(methodName)) {
+        } else if (INITIATE_PAYMENT.equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
             response.getHeaders().add("Location", getLocationHeaderForInitiatePayment(body));
         }

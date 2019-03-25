@@ -30,6 +30,9 @@ import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.HeaderValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
+import de.adorsys.psd2.xs2a.web.validator.ConsentControllerHeadersValidationService;
+import de.adorsys.psd2.xs2a.web.validator.PaymentControllerHeadersValidationService;
+import de.adorsys.psd2.xs2a.web.validator.common.PsuIpAddressvalidationService;
 import de.adorsys.psd2.xs2a.web.validator.common.XRequestIdValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,6 +69,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final ErrorMapperContainer errorMapperContainer;
     private final ObjectMapper objectMapper;
     private final XRequestIdValidationService xRequestIdValidationService;
+    private final PsuIpAddressvalidationService psuIpAddressvalidationService;
+    private final PaymentControllerHeadersValidationService paymentControllerHeadersValidationService;
+    private final ConsentControllerHeadersValidationService headersValidationService;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -91,7 +97,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
-        registry.addInterceptor(new HeaderValidationInterceptor(serviceTypeDiscoveryService, errorTypeMapper, errorMapperContainer, objectMapper, xRequestIdValidationService))
+        registry.addInterceptor(new HeaderValidationInterceptor(serviceTypeDiscoveryService, errorTypeMapper, errorMapperContainer, objectMapper, xRequestIdValidationService, psuIpAddressvalidationService, paymentControllerHeadersValidationService, headersValidationService))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), serviceTypeDiscoveryService, errorTypeMapper, errorMapperContainer, objectMapper))

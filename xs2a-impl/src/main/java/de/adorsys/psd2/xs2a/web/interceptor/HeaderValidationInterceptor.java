@@ -24,10 +24,14 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.web.validator.ConsentControllerHeadersValidationService;
+import de.adorsys.psd2.xs2a.web.validator.PaymentControllerHeadersValidationService;
+import de.adorsys.psd2.xs2a.web.validator.common.PsuIpAddressvalidationService;
 import de.adorsys.psd2.xs2a.web.validator.common.XRequestIdValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +43,8 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aMethodNameConstant.CREATE_CONSENT;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aMethodNameConstant.INITIATE_PAYMENT;
 
 @Slf4j
 @Component
@@ -49,13 +55,16 @@ public class HeaderValidationInterceptor extends HandlerInterceptorAdapter {
     private final ErrorMapperContainer errorMapperContainer;
     private final ObjectMapper objectMapper;
     private final XRequestIdValidationService xRequestIdValidationService;
+    private final PsuIpAddressvalidationService psuIpAddressvalidationService;
+    private final PaymentControllerHeadersValidationService paymentControllerHeadersValidationService;
+    private final ConsentControllerHeadersValidationService consentControllerHeadersValidationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        return isRequestValid(request, response);
+        return isRequestValid(request, response, handler);
     }
 
-    private boolean isRequestValid(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private boolean isRequestValid(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
         ValidationResult xRequestIdValidationResult = xRequestIdValidationService.validateXRequestId(request);
 
@@ -63,7 +72,39 @@ public class HeaderValidationInterceptor extends HandlerInterceptorAdapter {
             return buildError(response, xRequestIdValidationResult);
         }
 
+        return validateSpecificMethods(request, response, handler);
+    }
+
+    private boolean validateSpecificMethods(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+
+        if (isSpecifiedMethodCalled(handler, INITIATE_PAYMENT)) {
+            ValidationResult psuIpAddressValidationResult = psuIpAddressvalidationService.validatePsuIdAddress(request);
+            if (psuIpAddressValidationResult.isNotValid()) {
+                return buildError(response, psuIpAddressValidationResult);
+            }
+
+            ValidationResult tppRedirectValidationResult = paymentControllerHeadersValidationService.validateInitiatePayment();
+            if (tppRedirectValidationResult.isNotValid()) {
+                return buildError(response, tppRedirectValidationResult);
+            }
+        }
+
+        if (isSpecifiedMethodCalled(handler, CREATE_CONSENT)) {
+            ValidationResult cretaeConsentValidationResult = consentControllerHeadersValidationService.validateCreateConsent();
+            if (cretaeConsentValidationResult.isNotValid()) {
+                return buildError(response, cretaeConsentValidationResult);
+            }
+        }
+
         return true;
+    }
+
+    private boolean isSpecifiedMethodCalled(Object handler, String methodName) {
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            return handlerMethod.getMethod().getName().equals(methodName);
+        }
+        return false;
     }
 
     private boolean buildError(HttpServletResponse response, ValidationResult validationResult) throws IOException {

@@ -132,22 +132,6 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void createAccountConsent_Failure_InvalidHeaders() {
-        when(headersValidationService.validateCreateConsent()).thenReturn(INVALID_VALIDATION_RESULT);
-        //Given:
-        Consents consents = getConsents();
-        //When:
-        ResponseEntity responseEntity = consentController.createConsent(null, consents,
-            null, null, null, CORRECT_PSU_ID, null, null,
-            null, true, null, null,
-            EXPLICIT_PREFERRED, null, null, null, null,
-            null, null, null, null, null,
-            null);
-        //Then:
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
     public void createAccountConsent_Failure() {
         when(headersValidationService.validateCreateConsent()).thenReturn(VALID_VALIDATION_RESULT);
         //Given:

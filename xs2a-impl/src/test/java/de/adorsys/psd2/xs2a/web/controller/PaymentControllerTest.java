@@ -568,25 +568,6 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_Failure_InvalidHeaders() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(INVALID_VALIDATION_RESULT);
-
-        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(BAD_REQUEST));
-
-        // When
-        ResponseEntity actual = paymentController.initiatePayment(null, REQUEST_ID, null, CORRECT_PAYMENT_SERVICE, PRODUCT,
-            null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-            null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, true, null,
-            null, null, null, null, null, null,
-            null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
-    }
-
-    @Test
     public void initiatePayment_Failure_CreatePaymentHasError() {
         when(headersValidationService.validateInitiatePayment())
             .thenReturn(VALID_VALIDATION_RESULT);
@@ -663,25 +644,6 @@ public class PaymentControllerTest {
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    @Test
-    public void initiatePayment_XML_Failure_InvalidHeaders() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(INVALID_VALIDATION_RESULT);
-
-        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(BAD_REQUEST));
-
-        // When
-        ResponseEntity actual = paymentController.initiatePayment(REQUEST_ID, null, CORRECT_PAYMENT_SERVICE, PRODUCT,
-            XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-            null, String.valueOf(TPP_REDIRECT_PREFERRED_TRUE), null, REDIRECT_LINK, true, null,
-            null, null, null, null, null, null,
-            null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
     }
 
     @Test

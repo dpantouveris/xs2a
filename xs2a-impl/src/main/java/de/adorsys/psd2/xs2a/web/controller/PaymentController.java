@@ -37,7 +37,6 @@ import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
@@ -126,11 +125,6 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
-        ValidationResult consentValidationResult = headersValidationService.validateInitiatePayment();
-        if (consentValidationResult.isNotValid()) {
-            return responseErrorMapper.generateErrorResponse(consentValidationResult.getMessageError());
-        }
-
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
         ResponseObject serviceResponse =
@@ -159,11 +153,6 @@ public class PaymentController implements PaymentApi {
             ResponseObject<TransactionStatus> responseObject = ResponseObject.<TransactionStatus>builder()
                                                                    .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
-        }
-
-        ValidationResult consentValidationResult = headersValidationService.validateInitiatePayment();
-        if (consentValidationResult.isNotValid()) {
-            return responseErrorMapper.generateErrorResponse(consentValidationResult.getMessageError());
         }
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
