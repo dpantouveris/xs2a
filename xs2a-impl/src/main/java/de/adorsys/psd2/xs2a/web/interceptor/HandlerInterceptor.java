@@ -39,6 +39,8 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Slf4j
 @Component
 @RequiredArgsConstructor

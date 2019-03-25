@@ -26,6 +26,8 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Pattern;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "Payment initiation request header", value = "PaymentInitiationRequestHeader")

@@ -16,5 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.header;
 
+// TODO: should be removed in xxxx
+@Deprecated
 public interface RequestHeader {
 }

@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: should be removed in xxxx
+@Deprecated
 public class HeadersFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeadersFactory.class);
 

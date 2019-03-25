@@ -27,6 +27,8 @@ import org.springframework.http.MediaType;
 
 import javax.validation.constraints.NotNull;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Data
 @ApiModel(description = "Account request header", value = "AccountRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)

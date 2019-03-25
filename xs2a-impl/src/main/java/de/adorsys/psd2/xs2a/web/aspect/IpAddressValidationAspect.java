@@ -31,6 +31,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Aspect
 @Component
 @RequiredArgsConstructor

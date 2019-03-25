@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Service
 @AllArgsConstructor
 public class ParametersFactory {

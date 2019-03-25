@@ -25,6 +25,8 @@ import lombok.Data;
 
 import java.util.Date;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Data
 @ApiModel(description = "Account request parameter", value = "AccountRequestParameter")
 @JsonIgnoreProperties(ignoreUnknown = true)

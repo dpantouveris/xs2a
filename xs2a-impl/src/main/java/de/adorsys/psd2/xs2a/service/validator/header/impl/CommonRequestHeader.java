@@ -25,6 +25,8 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Data
 @ApiModel(description = "Common request header", value = "CommonRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -22,6 +22,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Data
 @ApiModel(description = "Payment request header", value = "PaymentRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)

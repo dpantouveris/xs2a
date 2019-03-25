@@ -39,6 +39,8 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: should be removed in xxxx
+@Deprecated
 @Slf4j
 public class RequestValidatorService {
     @Autowired
