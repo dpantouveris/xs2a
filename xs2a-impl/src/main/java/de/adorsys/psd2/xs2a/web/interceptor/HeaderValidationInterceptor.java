@@ -57,10 +57,10 @@ public class HeaderValidationInterceptor extends HandlerInterceptorAdapter {
 
     private boolean isRequestValid(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        ValidationResult validationResult = xRequestIdValidationService.validateXRequestId(request);
+        ValidationResult xRequestIdValidationResult = xRequestIdValidationService.validateXRequestId(request);
 
-        if (validationResult.isNotValid()) {
-            return buildError(response, validationResult);
+        if (xRequestIdValidationResult.isNotValid()) {
+            return buildError(response, xRequestIdValidationResult);
         }
 
         return true;
