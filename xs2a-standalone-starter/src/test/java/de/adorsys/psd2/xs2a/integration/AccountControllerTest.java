@@ -17,12 +17,12 @@
 package de.adorsys.psd2.xs2a.integration;
 
 
-import de.adorsys.aspsp.xs2a.spi.ASPSPXs2aApplication;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.service.AisConsentServiceRemote;
+import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -74,7 +74,8 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -83,7 +84,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
-    classes = ASPSPXs2aApplication.class)
+    classes = Xs2aStandaloneStarter.class)
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
     ObjectMapperConfig.class,
@@ -102,7 +103,6 @@ public class AccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
 
     @MockBean
     private AspspProfileService aspspProfileService;
@@ -182,7 +182,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_ShouldFail_WithNoUsageCounter()  throws Exception  {
+    public void getAccountList_ShouldFail_WithNoUsageCounter() throws Exception {
         // Given
         AccountConsent accountConsent = buildAccountConsent(0);
         given(xs2aAisConsentMapper.mapToAccountConsent(new AisAccountConsent())).willReturn(accountConsent);
@@ -200,7 +200,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed()  throws Exception  {
+    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
@@ -247,9 +247,9 @@ public class AccountControllerTest {
 
     private SpiResponse<List<SpiAccountDetails>> buildListSpiResponse(AspspConsentData aspspConsentData) {
         return (SpiResponse<List<SpiAccountDetails>>) SpiResponse.<List<SpiAccountDetails>>builder()
-                                                                .payload(Collections.EMPTY_LIST)
-                                                                .aspspConsentData(aspspConsentData)
-                                                                .success();
+                                                          .payload(Collections.EMPTY_LIST)
+                                                          .aspspConsentData(aspspConsentData)
+                                                          .success();
     }
 
     private AisAccountConsent buildAisAccountConsent(int usageCounter) {
